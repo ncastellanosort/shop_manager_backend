@@ -16,12 +16,25 @@ export class AuthService {
     if (company?.hashedPassword !== loginDTO.password) {
       throw new UnauthorizedException();
     }
-    const payload = { sub: company.taxId, username: company.name };
-    return await this.jwtService.signAsync(payload);
+    const payload = { company };
+    return {
+      company: company,
+      token: await this.jwtService.signAsync(payload),
+    };
   }
 
   async register(company: Company) {
     await this.companyRepository.saveCompany(company);
     return { status: 'company saved' };
+  }
+
+  validate(token: string) {
+    try {
+      const decoded = this.jwtService.verify(token);
+      return decoded;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
   }
 }

@@ -5,6 +5,8 @@ import {
   HttpCode,
   HttpStatus,
   Res,
+  Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Company } from 'src/companies/entities/company.entity';
@@ -21,14 +23,24 @@ export class AuthController {
     @Body() loginDTO: CompanyLoginDTO,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const token = await this.authService.login(loginDTO);
-    res.setHeader('token', token);
-    return { message: 'valid user' };
+    const { company, token } = await this.authService.login(loginDTO);
+    res.setHeader('auth_token', token);
+    return { company: company };
   }
 
   @Post('register')
   async register(@Body() company: Company): Promise<object> {
     const res = await this.authService.register(company);
     return res;
+  }
+
+  @Post('me')
+  getMe(@Req() req: Request) {
+    const auth_token = req.headers['auth_token'] as string;
+    if (!auth_token) {
+      throw new UnauthorizedException('no token available');
+    }
+    const data = this.authService.validate(auth_token);
+    return data;
   }
 }
