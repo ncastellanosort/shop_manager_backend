@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Get,
   Body,
   HttpCode,
   HttpStatus,
@@ -34,7 +35,7 @@ export class AuthController {
     return res;
   }
 
-  @Post('me')
+  @Get('me')
   getMe(@Req() req: Request) {
     const auth_token = req.headers['auth_token'] as string;
     if (!auth_token) {
