@@ -5,14 +5,12 @@ import {
   Body,
   HttpCode,
   HttpStatus,
-  Res,
   Req,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Company } from 'src/companies/entities/company.entity';
 import { CompanyLoginDTO } from './dto/company.dto';
-import type { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -20,13 +18,9 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  async login(
-    @Body() loginDTO: CompanyLoginDTO,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async login(@Body() loginDTO: CompanyLoginDTO) {
     const { company, token } = await this.authService.login(loginDTO);
-    res.setHeader('auth_token', token);
-    return { company: company };
+    return { company: company, token: token };
   }
 
   @Post('register')
@@ -37,11 +31,17 @@ export class AuthController {
 
   @Get('me')
   getMe(@Req() req: Request) {
-    const auth_token = req.headers['auth_token'] as string;
-    if (!auth_token) {
-      throw new UnauthorizedException('no token available');
+    const authHeader = req.headers['authorization'] as string;
+    if (!authHeader) {
+      throw new UnauthorizedException('no token provided');
     }
-    const data = this.authService.validate(auth_token);
+
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      throw new UnauthorizedException('invalid token format');
+    }
+
+    const data = this.authService.validate(token) as Company;
     return data;
   }
 }
