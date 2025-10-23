@@ -44,9 +44,16 @@ export class Product {
   @Column()
   category_id: number;
 
-  @Column()
+  @Column({
+    type: 'enum',
+    enum: ['available', 'hidden', 'not available'],
+    default: 'available',
+  })
   state: 'available' | 'hidden' | 'not available';
 
   @ManyToOne(() => Company, (company) => company.products)
   company: Company;
+
+  @Column()
+  companyId: number;
 }

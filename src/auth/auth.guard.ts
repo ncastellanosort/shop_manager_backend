@@ -9,7 +9,7 @@ import { Request } from 'express';
 import { Company } from 'src/companies/entities/company.entity';
 import { ConfigService } from '@nestjs/config';
 
-interface JwtPayload {
+export interface JwtPayload {
   company: Company;
   iat?: number;
   exp?: number;

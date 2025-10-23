@@ -5,9 +5,16 @@ import { JwtService } from '@nestjs/jwt';
 import { ProductService } from './product.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
+import { CompanyModule } from 'src/companies/company.module';
+import { Company } from 'src/companies/entities/company.entity';
 
 @Module({
-  imports: [AuthModule, TypeOrmModule.forFeature([Product])],
+  imports: [
+    AuthModule,
+    TypeOrmModule.forFeature([Company]),
+    TypeOrmModule.forFeature([Product]),
+    CompanyModule,
+  ],
   controllers: [ProductController],
   providers: [JwtService, ProductService],
   exports: [ProductService],

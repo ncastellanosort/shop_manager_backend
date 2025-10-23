@@ -26,8 +26,8 @@ export class ProductController {
     return 'productos';
   }
 
-  @HttpCode(HttpStatus.CREATED)
   @Post('product')
+  @HttpCode(HttpStatus.CREATED)
   async postProduct(@Body() product: Product, @Req() req: Request) {
     const authHeader = req.headers['authorization'] as string;
     if (!authHeader) {
