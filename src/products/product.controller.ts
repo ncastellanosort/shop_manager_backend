@@ -22,8 +22,14 @@ export class ProductController {
   ) {}
 
   @Get('products')
-  getAll() {
-    return 'productos';
+  @HttpCode(HttpStatus.OK)
+  async getAll(@Req() req: Request) {
+    const authHeader = req.headers['authorization'] as string;
+    if (!authHeader) throw new UnauthorizedException('no token provided');
+
+    const token = this.authService.extract(authHeader);
+    if (!token) throw new UnauthorizedException('invalid token format');
+    return await this.productService.getProducts(token);
   }
 
   @Post('product')

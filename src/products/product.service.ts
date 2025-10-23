@@ -14,6 +14,25 @@ export class ProductService {
     private authService: AuthService,
   ) {}
 
+  async getProducts(token: string) {
+    try {
+      const payload = this.authService.validate(token) as JwtPayload;
+
+      const currentCompany = await this.companyRepository.findOne({
+        where: { id: payload.company.id },
+      });
+
+      if (!currentCompany) throw new BadRequestException('company not found');
+
+      const products = await this.productRepository.find({
+        where: { companyId: currentCompany.id },
+      });
+      return products;
+    } catch (err) {
+      throw new BadRequestException(`err saving product: ${err}`);
+    }
+  }
+
   async saveProduct(product: Product, token: string): Promise<Product> {
     try {
       const payload = this.authService.validate(token) as JwtPayload;
