@@ -36,7 +36,7 @@ export class AuthController {
       throw new UnauthorizedException('no token provided');
     }
 
-    const token = authHeader.split(' ')[1];
+    const token = this.authService.extract(authHeader);
     if (!token) {
       throw new UnauthorizedException('invalid token format');
     }

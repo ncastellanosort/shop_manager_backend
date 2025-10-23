@@ -1,9 +1,11 @@
+import { Product } from 'src/products/entities/product.entity';
 import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -36,4 +38,7 @@ export class Company {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @OneToMany(() => Product, (product) => product.company)
+  products: Product[];
 }

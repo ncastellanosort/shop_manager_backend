@@ -28,6 +28,10 @@ export class AuthService {
     return { status: 'company saved' };
   }
 
+  extract(token: string) {
+    return token.split(' ')[1];
+  }
+
   validate(token: string) {
     try {
       const decoded = this.jwtService.verify(token);
