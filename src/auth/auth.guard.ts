@@ -30,9 +30,7 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const token = this.extractTokenFromHeader(request);
 
-    if (!token) {
-      throw new UnauthorizedException('missing token');
-    }
+    if (!token) throw new UnauthorizedException('missing token');
 
     try {
       const payload = await this.jwtService.verifyAsync<JwtPayload>(token, {
@@ -40,8 +38,8 @@ export class AuthGuard implements CanActivate {
       });
 
       request.user = payload;
-    } catch {
-      throw new UnauthorizedException('invalid or expired token');
+    } catch (err) {
+      throw new UnauthorizedException(`invalid or expired token: ${err}`);
     }
 
     return true;

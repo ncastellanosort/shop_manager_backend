@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Company } from './entities/company.entity';
 import { Repository } from 'typeorm';
@@ -10,8 +10,12 @@ export class CompanyService {
   ) {}
 
   async saveCompany(company: Company): Promise<Company> {
-    const savedCompany = await this.companyRepository.save(company);
-    return savedCompany;
+    try {
+      const savedCompany = await this.companyRepository.save(company);
+      return savedCompany;
+    } catch (err) {
+      throw new BadRequestException(`err saving company: ${err}`);
+    }
   }
 
   async findCompany(email: string): Promise<Company | null> {
@@ -20,6 +24,8 @@ export class CompanyService {
         email: email,
       },
     });
+
+    if (!company) throw new BadRequestException('company not found');
 
     return company;
   }

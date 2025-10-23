@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CompanyService } from 'src/companies/company.service';
 import { Company } from 'src/companies/entities/company.entity';
 import { CompanyLoginDTO } from './dto/company.dto';
@@ -24,8 +28,12 @@ export class AuthService {
   }
 
   async register(company: Company) {
-    await this.companyRepository.saveCompany(company);
-    return { status: 'company saved' };
+    try {
+      const savedCompany = await this.companyRepository.saveCompany(company);
+      return savedCompany;
+    } catch (err) {
+      throw new BadRequestException(`err saving company: ${err}`);
+    }
   }
 
   extract(token: string) {
