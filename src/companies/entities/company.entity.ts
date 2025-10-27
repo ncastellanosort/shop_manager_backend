@@ -34,7 +34,7 @@ export class Company {
   email: string;
 
   @Column()
-  hashedPassword: string;
+  password: string;
 
   @Column({ default: true })
   isActive: boolean;

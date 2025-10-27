@@ -17,7 +17,7 @@ export class AuthService {
 
   async login(loginDTO: CompanyLoginDTO) {
     const company = await this.companyRepository.findCompany(loginDTO.email);
-    if (company?.hashedPassword !== loginDTO.password) {
+    if (company?.password !== loginDTO.password) {
       throw new UnauthorizedException();
     }
     const payload = { company };
