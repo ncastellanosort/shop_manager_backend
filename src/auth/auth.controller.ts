@@ -31,7 +31,7 @@ export class AuthController {
   }
 
   @Get('me')
-  @HttpCode(HttpStatus.FOUND)
+  @HttpCode(HttpStatus.OK)
   getMe(@Req() req: Request) {
     const authHeader = req.headers['authorization'] as string;
     if (!authHeader) throw new UnauthorizedException('no token provided');
