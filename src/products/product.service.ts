@@ -16,7 +16,7 @@ export class ProductService {
 
   async getProducts(token: string) {
     try {
-      const payload = this.authService.validate(token) as JwtPayload;
+      const payload = (await this.authService.validate(token)) as JwtPayload;
 
       const currentCompany = await this.companyRepository.findOne({
         where: { id: payload.company.id },
@@ -35,7 +35,7 @@ export class ProductService {
 
   async saveProduct(product: Product, token: string): Promise<Product> {
     try {
-      const payload = this.authService.validate(token) as JwtPayload;
+      const payload = (await this.authService.validate(token)) as JwtPayload;
 
       const currentCompany = await this.companyRepository.findOne({
         where: { id: payload.company.id },

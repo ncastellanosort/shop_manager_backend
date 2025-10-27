@@ -32,14 +32,14 @@ export class AuthController {
 
   @Get('me')
   @HttpCode(HttpStatus.OK)
-  getMe(@Req() req: Request) {
+  async getMe(@Req() req: Request) {
     const authHeader = req.headers['authorization'] as string;
     if (!authHeader) throw new UnauthorizedException('no token provided');
 
     const token = this.authService.extract(authHeader);
     if (!token) throw new UnauthorizedException('invalid token format');
 
-    const data = this.authService.validate(token) as Company;
+    const data = (await this.authService.validate(token)) as Company;
     return data;
   }
 }
