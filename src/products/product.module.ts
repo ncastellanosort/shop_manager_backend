@@ -11,12 +11,10 @@ import { Company } from 'src/companies/entities/company.entity';
 @Module({
   imports: [
     AuthModule,
-    TypeOrmModule.forFeature([Company]),
-    TypeOrmModule.forFeature([Product]),
     CompanyModule,
+    TypeOrmModule.forFeature([Company, Product]),
   ],
   controllers: [ProductController],
   providers: [JwtService, ProductService],
-  exports: [ProductService],
 })
 export class ProductModule {}

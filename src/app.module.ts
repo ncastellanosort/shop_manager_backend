@@ -6,6 +6,8 @@ import { CompanyModule } from './companies/company.module';
 import { ConfigModule } from '@nestjs/config';
 import { ProductModule } from './products/product.module';
 import { Product } from './products/entities/product.entity';
+import { CategoriesModule } from './categories/categories.module';
+import { Category } from './categories/entities/category.entity';
 
 @Module({
   imports: [
@@ -20,12 +22,13 @@ import { Product } from './products/entities/product.entity';
       username: 'postgres',
       password: 'root',
       database: 'shop_manager',
-      entities: [Company, Product],
+      entities: [Company, Product, Category],
       synchronize: true,
     }),
     AuthModule,
     CompanyModule,
     ProductModule,
+    CategoriesModule,
   ],
 })
 export class AppModule {}
