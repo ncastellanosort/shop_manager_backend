@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Req,
   UnauthorizedException,
@@ -42,5 +43,16 @@ export class ProductController {
     if (!token) throw new UnauthorizedException('invalid token format');
 
     return await this.productService.saveProduct(product, token);
+  }
+
+  @Get('product/:id')
+  async getProduct(@Param('id') id: string, @Req() req: Request) {
+    const authHeader = req.headers['authorization'] as string;
+    if (!authHeader) throw new UnauthorizedException('no token provided');
+
+    const token = this.authService.extract(authHeader);
+    if (!token) throw new UnauthorizedException('invalid token format');
+
+    return await this.productService.getProduct(+id, token);
   }
 }

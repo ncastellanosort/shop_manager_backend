@@ -10,39 +10,71 @@ import {
 
 @Entity()
 export class Product {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @CreateDateColumn({ type: 'timestamp' })
   insertedAt: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt: Date;
-  @PrimaryGeneratedColumn()
-  id: number;
 
   @Column()
   name: string;
 
-  @Column('simple-array')
-  tags: string[];
-
-  @Column()
+  @Column({ nullable: true })
   brand: string;
 
-  @Column()
-  provider_id: number;
-
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
-  @Column()
-  price: number;
-
-  @Column()
+  @Column({ unique: true })
   sku: string;
 
-  @Column()
+  @Column({ nullable: true })
+  barcode: string;
+
+  @Column('simple-array', { nullable: true })
+  tags: string[];
+
+  @Column('decimal', { precision: 10, scale: 2 })
+  price: number;
+
+  @Column('decimal', { precision: 10, scale: 2, nullable: true })
+  costPrice: number;
+
+  @Column('decimal', { precision: 5, scale: 2, default: 0 })
+  discountPercent: number;
+
+  @Column('decimal', { precision: 5, scale: 2, default: 0 })
+  taxRate: number;
+
+  @Column({ default: 0 })
   stock: number;
-  @Column()
+
+  @Column({ default: 0 })
+  minStock: number;
+
+  @Column({ default: 0 })
+  maxStock: number;
+
+  @Column({ nullable: true })
+  warehouseLocation: string;
+
+  @Column({ default: true })
+  isTracked: boolean;
+
+  @Column({ nullable: true })
   category_id: number;
+
+  @Column({ nullable: true })
+  provider_id: number;
+
+  @Column('simple-array', { nullable: true })
+  images: string[];
+
+  @Column({ nullable: true })
+  mainImage: string;
 
   @Column({
     type: 'enum',
@@ -51,9 +83,23 @@ export class Product {
   })
   state: 'available' | 'hidden' | 'not available';
 
-  @ManyToOne(() => Company, (company) => company.products)
+  @Column('jsonb', { nullable: true })
+  attributes: Record<string, any>;
+
+  @ManyToOne(() => Company, (company) => company.products, {
+    onDelete: 'CASCADE',
+  })
   company: Company;
 
   @Column()
   companyId: number;
+
+  @Column({ default: false })
+  deleted: boolean;
+
+  @Column({ nullable: true })
+  createdBy: string;
+
+  @Column({ nullable: true })
+  updatedBy: string;
 }

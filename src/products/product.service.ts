@@ -46,12 +46,36 @@ export class ProductService {
       const newProduct = this.productRepository.create({
         ...product,
         companyId: currentCompany.id,
+        createdBy: currentCompany.email,
+        updatedBy: currentCompany.email,
       });
 
       const savedProduct = await this.productRepository.save(newProduct);
       return savedProduct;
     } catch (err) {
       throw new BadRequestException(`err saving product: ${err}`);
+    }
+  }
+
+  async getProduct(productId: number, token: string) {
+    try {
+      const payload = (await this.authService.validate(token)) as JwtPayload;
+
+      const currentCompany = await this.companyRepository.findOne({
+        where: { id: payload.company.id },
+      });
+
+      if (!currentCompany) throw new BadRequestException('company not found');
+
+      const product = await this.productRepository.findOne({
+        where: { id: productId, companyId: currentCompany.id },
+      });
+
+      if (!product) throw new BadRequestException('product not found');
+
+      return product;
+    } catch (err) {
+      throw new BadRequestException(`err getting product: ${err}`);
     }
   }
 }
