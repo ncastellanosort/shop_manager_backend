@@ -115,4 +115,38 @@ export class ProductService {
       throw new BadRequestException(`error updating product: ${err}`);
     }
   }
+
+  async deleteProduct(productId: number, token: string) {
+    try {
+      const payload = (await this.authService.validate(token)) as JwtPayload;
+
+      const currentCompany = await this.companyRepository.findOne({
+        where: { id: payload.company.id },
+      });
+
+      if (!currentCompany) {
+        throw new BadRequestException('company not found');
+      }
+
+      const product = await this.productRepository.findOne({
+        where: { id: productId, companyId: currentCompany.id },
+      });
+
+      if (!product) {
+        throw new BadRequestException('product not found');
+      }
+
+      product.deleted = true;
+      product.state = 'hidden';
+
+      await this.productRepository.save(product);
+
+      return {
+        message: 'product deleted successfully (soft delete)',
+        id: productId,
+      };
+    } catch (err) {
+      throw new BadRequestException(`error deleting product: ${err}`);
+    }
+  }
 }

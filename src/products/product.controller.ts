@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -70,5 +71,16 @@ export class ProductController {
     if (!token) throw new UnauthorizedException('invalid token format');
 
     return await this.productService.patchProduct(+id, partialProduct, token);
+  }
+
+  @Delete('product/:id')
+  async deleteProduct(@Param('id') id: string, @Req() req: Request) {
+    const authHeader = req.headers['authorization'] as string;
+    if (!authHeader) throw new UnauthorizedException('no token provided');
+
+    const token = this.authService.extract(authHeader);
+    if (!token) throw new UnauthorizedException('invalid token format');
+
+    return this.productService.deleteProduct(+id, token);
   }
 }
