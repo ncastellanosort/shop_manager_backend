@@ -39,6 +39,7 @@ export class CategoriesService {
       if (!data) {
         throw new BadRequestException('category could not be saved');
       }
+
       return data as Category;
     } catch (err) {
       throw new BadRequestException(`err saving category: ${err}`);
@@ -56,14 +57,48 @@ export class CategoriesService {
         .select()
         .eq('company_id', payload.company.id);
 
+      if (error) {
+        throw new BadRequestException(
+          `err getting all categories in supabase: ${error.message}`,
+        );
+      }
+
+      if (!data) {
+        throw new BadRequestException('category could not be saved');
+      }
+
       return data as Category[];
     } catch (err) {
       throw new BadRequestException(`err finding categories: ${err}`);
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(id: number, token: string) {
+    try {
+      const payload = (await this.authService.validate(token)) as JwtPayload;
+
+      const supabase = this.supabaseService.getClient();
+
+      const { data, error } = await supabase
+        .from('categories')
+        .select()
+        .eq('company_id', payload.company.id)
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        throw new BadRequestException(
+          `err finding one in supabase: ${error.message}`,
+        );
+      }
+
+      if (!data) {
+        throw new BadRequestException('category not found');
+      }
+      return data as Category;
+    } catch (err) {
+      throw new BadRequestException(`err finding category: ${err}`);
+    }
   }
 
   update(id: number, updateCategoryDto: UpdateCategoryDto) {
