@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CompanyService } from 'src/companies/company.service';
-import { Company } from 'src/companies/entities/company.entity';
+import type { Company } from 'src/companies/types/company.type';
 import { CompanyLoginDTO } from './dto/company.dto';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcrypt';

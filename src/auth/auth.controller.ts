@@ -9,8 +9,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Company } from 'src/companies/entities/company.entity';
 import { CompanyLoginDTO } from './dto/company.dto';
+import type { Company } from 'src/companies/types/company.type';
 
 @Controller('auth')
 export class AuthController {

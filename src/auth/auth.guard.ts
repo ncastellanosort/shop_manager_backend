@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { Company } from 'src/companies/entities/company.entity';
 import { ConfigService } from '@nestjs/config';
+import { Company } from 'src/companies/types/company.type';
 
 export interface JwtPayload {
   company: Company;
