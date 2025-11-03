@@ -8,12 +8,15 @@ import {
   Delete,
   Req,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import type { CreateCategoryDto } from './dto/create-category.dto';
 import type { UpdateCategoryDto } from './dto/update-category.dto';
 import { AuthService } from 'src/auth/auth.service';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('categories')
 export class CategoriesController {
   constructor(
