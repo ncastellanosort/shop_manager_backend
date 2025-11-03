@@ -1,32 +1,46 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Company } from './entities/company.entity';
-import { Repository } from 'typeorm';
+import { SupabaseService } from 'src/supabase/supabase.service';
 
 @Injectable()
 export class CompanyService {
-  constructor(
-    @InjectRepository(Company) private companyRepository: Repository<Company>,
-  ) {}
+  constructor(private supabaseService: SupabaseService) {}
 
-  async saveCompany(company: Company): Promise<Company> {
+  async saveCompany(company: Company) {
     try {
-      const savedCompany = await this.companyRepository.save(company);
-      return savedCompany;
+      const supabase = this.supabaseService.getClient();
+      const { data, error } = await supabase
+        .from('companies')
+        .insert(company)
+        .select();
+      if (error)
+        throw new BadRequestException(
+          `err saving company (supabase) ${error.code}`,
+        );
+      return data;
     } catch (err) {
       throw new BadRequestException(`err saving company: ${err}`);
     }
   }
 
-  async findCompany(email: string): Promise<Company | null> {
+  async findCompany(email: string) {
+    const supabase = this.supabaseService.getClient();
+    const { data, error } = await supabase
+      .from('companies')
+      .select('*')
+      .eq('email', email)
+      .single();
+
+    /*
     const company = await this.companyRepository.findOne({
       where: {
         email: email,
       },
     });
+    */
 
-    if (!company) throw new BadRequestException('company not found');
+    if (error) throw new BadRequestException('company not found');
 
-    return company;
+    return data as Company;
   }
 }
