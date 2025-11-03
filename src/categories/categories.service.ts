@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { SupabaseService } from 'src/supabase/supabase.service';
@@ -150,6 +150,10 @@ export class CategoriesService {
         throw new BadRequestException(
           `err removing one in supabase: ${error.message}`,
         );
+      }
+
+      if (!data) {
+        throw new NotFoundException('category not found');
       }
 
       return { status: 'removed' };
