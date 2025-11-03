@@ -121,7 +121,7 @@ export class CategoriesService {
 
       if (error) {
         throw new BadRequestException(
-          `err finding one in supabase: ${error.message}`,
+          `err updating one in supabase: ${error.message}`,
         );
       }
 
@@ -130,11 +130,31 @@ export class CategoriesService {
       }
       return data as Category;
     } catch (err) {
-      throw new BadRequestException(`err finding category: ${err}`);
+      throw new BadRequestException(`err updating the category: ${err}`);
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: number, token: string) {
+    try {
+      const payload = (await this.authService.validate(token)) as JwtPayload;
+
+      const supabase = this.supabaseService.getClient();
+
+      const { data, error } = await supabase
+        .from('categories')
+        .delete()
+        .eq('company_id', payload.company.id)
+        .eq('id', id);
+
+      if (error) {
+        throw new BadRequestException(
+          `err removing one in supabase: ${error.message}`,
+        );
+      }
+
+      return { status: 'removed' };
+    } catch (err) {
+      throw new BadRequestException(`err removing category: ${err}`);
+    }
   }
 }

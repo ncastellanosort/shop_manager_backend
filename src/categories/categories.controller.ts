@@ -70,7 +70,12 @@ export class CategoriesController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoriesService.remove(+id);
+  async remove(@Req() req: Request, @Param('id') id: string) {
+    const authHeader = req.headers['authorization'] as string;
+    if (!authHeader) throw new UnauthorizedException('no token provided');
+
+    const token = this.authService.extract(authHeader);
+    if (!token) throw new UnauthorizedException('invalid token format');
+    return await this.categoriesService.remove(+id, token);
   }
 }
