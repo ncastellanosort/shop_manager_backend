@@ -1,0 +1,63 @@
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
+import { SupabaseService } from 'src/supabase/supabase.service';
+import { Category } from './types/category.types';
+import { AuthService } from 'src/auth/auth.service';
+import { JwtPayload } from 'src/auth/auth.guard';
+
+@Injectable()
+export class CategoriesService {
+  constructor(
+    private supabaseService: SupabaseService,
+    private authService: AuthService,
+  ) {}
+
+  async create(createCategoryDto: CreateCategoryDto, token: string) {
+    try {
+      const payload = (await this.authService.validate(token)) as JwtPayload;
+
+      const supabase = this.supabaseService.getClient();
+
+      const newCategory = {
+        ...createCategoryDto,
+        company_id: payload.company.id,
+      };
+
+      const { data, error } = await supabase
+        .from('categories')
+        .insert(newCategory)
+        .select()
+        .single();
+
+      if (error) {
+        throw new BadRequestException(
+          `err inserting in supabase: ${error.message}`,
+        );
+      }
+
+      if (!data) {
+        throw new BadRequestException('category could not be saved');
+      }
+      return data as Category;
+    } catch (err) {
+      throw new BadRequestException(`err saving category: ${err}`);
+    }
+  }
+
+  findAll() {
+    return `This action returns all categories`;
+  }
+
+  findOne(id: number) {
+    return `This action returns a #${id} category`;
+  }
+
+  update(id: number, updateCategoryDto: UpdateCategoryDto) {
+    return `This action updates a #${id} category`;
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} category`;
+  }
+}

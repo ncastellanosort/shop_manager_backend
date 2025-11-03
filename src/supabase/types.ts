@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      categories: {
+        Row: {
+          company_id: number
+          created_at: string | null
+          description: string | null
+          id: number
+          is_active: boolean
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          company_id: number
+          created_at?: string | null
+          description?: string | null
+          id?: never
+          is_active?: boolean
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          company_id?: number
+          created_at?: string | null
+          description?: string | null
+          id?: never
+          is_active?: boolean
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "categories_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companies: {
         Row: {
           address: string
@@ -52,6 +90,129 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      products: {
+        Row: {
+          category_id: number | null
+          company_id: number
+          created_at: string | null
+          description: string | null
+          id: number
+          is_active: boolean
+          min_stock: number
+          name: string
+          purchase_price: number
+          sale_price: number
+          sku: string
+          stock: number
+          supplier_id: number | null
+          tax: number
+          unit: string
+          updated_at: string | null
+        }
+        Insert: {
+          category_id?: number | null
+          company_id: number
+          created_at?: string | null
+          description?: string | null
+          id?: never
+          is_active?: boolean
+          min_stock?: number
+          name: string
+          purchase_price?: number
+          sale_price?: number
+          sku: string
+          stock?: number
+          supplier_id?: number | null
+          tax?: number
+          unit?: string
+          updated_at?: string | null
+        }
+        Update: {
+          category_id?: number | null
+          company_id?: number
+          created_at?: string | null
+          description?: string | null
+          id?: never
+          is_active?: boolean
+          min_stock?: number
+          name?: string
+          purchase_price?: number
+          sale_price?: number
+          sku?: string
+          stock?: number
+          supplier_id?: number | null
+          tax?: number
+          unit?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      suppliers: {
+        Row: {
+          address: string | null
+          company_id: number
+          created_at: string | null
+          email: string | null
+          id: number
+          is_active: boolean
+          name: string
+          phone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          company_id: number
+          created_at?: string | null
+          email?: string | null
+          id?: never
+          is_active?: boolean
+          name: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          company_id?: number
+          created_at?: string | null
+          email?: string | null
+          id?: never
+          is_active?: boolean
+          name?: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "suppliers_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

@@ -4,10 +4,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { CompanyModule } from 'src/companies/company.module';
+import { SupabaseModule } from 'src/supabase/supabase.module';
 
 @Module({
   imports: [
-    CompanyModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -16,6 +16,8 @@ import { CompanyModule } from 'src/companies/company.module';
         signOptions: { expiresIn: '1d' },
       }),
     }),
+    SupabaseModule,
+    CompanyModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],
