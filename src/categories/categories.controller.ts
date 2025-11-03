@@ -56,11 +56,17 @@ export class CategoriesController {
   }
 
   @Patch(':id')
-  update(
+  async update(
+    @Req() req: Request,
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
   ) {
-    return this.categoriesService.update(+id, updateCategoryDto);
+    const authHeader = req.headers['authorization'] as string;
+    if (!authHeader) throw new UnauthorizedException('no token provided');
+
+    const token = this.authService.extract(authHeader);
+    if (!token) throw new UnauthorizedException('invalid token format');
+    return await this.categoriesService.update(+id, updateCategoryDto, token);
   }
 
   @Delete(':id')

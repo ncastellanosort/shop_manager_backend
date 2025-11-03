@@ -101,8 +101,37 @@ export class CategoriesService {
     }
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(
+    id: number,
+    updateCategoryDto: UpdateCategoryDto,
+    token: string,
+  ) {
+    try {
+      const payload = (await this.authService.validate(token)) as JwtPayload;
+
+      const supabase = this.supabaseService.getClient();
+
+      const { data, error } = await supabase
+        .from('categories')
+        .update(updateCategoryDto)
+        .eq('company_id', payload.company.id)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        throw new BadRequestException(
+          `err finding one in supabase: ${error.message}`,
+        );
+      }
+
+      if (!data) {
+        throw new BadRequestException('category not found');
+      }
+      return data as Category;
+    } catch (err) {
+      throw new BadRequestException(`err finding category: ${err}`);
+    }
   }
 
   remove(id: number) {
