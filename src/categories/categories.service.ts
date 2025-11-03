@@ -45,8 +45,21 @@ export class CategoriesService {
     }
   }
 
-  findAll() {
-    return `This action returns all categories`;
+  async findAll(token: string) {
+    try {
+      const payload = (await this.authService.validate(token)) as JwtPayload;
+
+      const supabase = this.supabaseService.getClient();
+
+      const { data, error } = await supabase
+        .from('categories')
+        .select()
+        .eq('company_id', payload.company.id);
+
+      return data as Category[];
+    } catch (err) {
+      throw new BadRequestException(`err finding categories: ${err}`);
+    }
   }
 
   findOne(id: number) {

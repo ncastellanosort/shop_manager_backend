@@ -36,8 +36,13 @@ export class CategoriesController {
   }
 
   @Get()
-  findAll() {
-    return this.categoriesService.findAll();
+  findAll(@Req() req: Request) {
+    const authHeader = req.headers['authorization'] as string;
+    if (!authHeader) throw new UnauthorizedException('no token provided');
+
+    const token = this.authService.extract(authHeader);
+    if (!token) throw new UnauthorizedException('invalid token format');
+    return this.categoriesService.findAll(token);
   }
 
   @Get(':id')
